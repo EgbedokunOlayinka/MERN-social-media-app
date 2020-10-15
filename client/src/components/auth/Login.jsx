@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-const Login = () => {
+import { login } from "../../actions/auth";
+
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormdata] = useState({
     email: "",
     password: "",
@@ -18,8 +21,12 @@ const Login = () => {
 
     setFormdata({ email, password });
 
-    console.log(formData, "success");
+    login(email, password);
   };
+
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <React.Fragment>
@@ -56,4 +63,8 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { login })(Login);

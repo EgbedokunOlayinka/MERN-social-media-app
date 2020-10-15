@@ -1,7 +1,47 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-const Navbar = () => {
+import { logout } from "../../actions/auth";
+
+const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+  const guestLinks = (
+    <ul>
+      <li>
+        <Link to="/profiles">Developers</Link>
+      </li>
+      <li>
+        <Link to="/register">Register</Link>
+      </li>
+      <li>
+        <Link to="/login">Login</Link>
+      </li>
+    </ul>
+  );
+
+  const authLinks = (
+    <ul>
+      <li>
+        <Link to="/profiles">Developers</Link>
+      </li>
+      <li>
+        <Link to="/posts">Posts</Link>
+      </li>
+      <li>
+        <Link to="/dashboard">
+          <i className="fas fa-user" />
+          <span className="hide-sm">Dashboard</span>
+        </Link>
+      </li>
+      <li>
+        <a onClick={logout} href="#!">
+          <i className="fas fa-sign-out-alt" />{" "}
+          <span className="hide-sm">Logout</span>
+        </a>
+      </li>
+    </ul>
+  );
+
   return (
     <nav className="navbar bg-dark">
       <h1>
@@ -9,19 +49,17 @@ const Navbar = () => {
           <i className="fas fa-code"></i> WaveConnect
         </Link>
       </h1>
-      <ul>
-        <li>
-          <Link to="!#">Developers</Link>
-        </li>
-        <li>
-          <Link to="/register">Register</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-      </ul>
+      {!loading && (
+        <React.Fragment>
+          {isAuthenticated ? authLinks : guestLinks}
+        </React.Fragment>
+      )}
     </nav>
   );
 };
 
-export default Navbar;
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { logout })(Navbar);
